@@ -3,6 +3,7 @@ import sha256 from 'crypto-js/sha256';
 import { Transaction } from "./Transaction";
 import { BlockStatusEnum, TransactionTypeEnum } from "./Enum/enums";
 import { TransactionData } from "./TransactionData";
+import { resolve } from "path";
 
 export class Blockchain{
 
@@ -30,28 +31,33 @@ export class Blockchain{
      * Mine a new block to add it to the blockchain
      * @param newBlock Block you wish to mine
      * @param miner Miner trying to mine
-     * @returns True if block is mined
+     * @returns Promise true if block is mined
      */
-    mineBlock(newBlock:Block, miner:string):boolean{
-        if(newBlock.status != BlockStatusEnum.PENDING) return false;
-        let nonce:number = 0;
-        const lastBlock:Block = this.getLastBlock();
-        newBlock.addMintTransaction(miner, this.reward);
-        while(true){
-            const newHash:string = sha256(newBlock.hash + nonce).toString();
-            if(newHash.startsWith("0000")){ 
-                newBlock.minedTimestamp = new Date().getTime();
-                newBlock.hash = newHash;
-                newBlock.nonce = nonce;
-                newBlock.previousHash = lastBlock.hash;
-                newBlock.index = lastBlock.index + 1;
-                newBlock.status = BlockStatusEnum.MINED;
-                break;
+    mineBlock(newBlock:Block, miner:string):Promise<boolean>{
+        return new Promise(resolve => {
+            if(newBlock.status != BlockStatusEnum.PENDING) {
+                resolve(false); 
+                return false;
             }
-            nonce++;
-        }
-        this.chain.push(newBlock);
-        return true;
+            let nonce:number = 0;
+            const lastBlock:Block = this.getLastBlock();
+            newBlock.addMintTransaction(miner, this.reward);
+            while(true){
+                const newHash:string = sha256(newBlock.hash + nonce).toString();
+                if(newHash.startsWith("0000")){ 
+                    newBlock.minedTimestamp = new Date().getTime();
+                    newBlock.hash = newHash;
+                    newBlock.nonce = nonce;
+                    newBlock.previousHash = lastBlock.hash;
+                    newBlock.index = lastBlock.index + 1;
+                    newBlock.status = BlockStatusEnum.MINED;
+                    break;
+                } 
+                nonce++;
+            }
+            this.chain.push(newBlock);
+           resolve(true);
+        });
     }
 
     /**

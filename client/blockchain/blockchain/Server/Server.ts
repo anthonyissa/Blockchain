@@ -19,7 +19,7 @@ export const initServer = () => {
     const blockchain:Blockchain = new Blockchain();
 
     blockchain.checkBlock(newBlock);
-    blockchain.mineBlock(newBlock, "Bob");
+    blockchain.mineBlock(newBlock, "Bob").then(()=> console.log("done"));
 
     return blockchain;
 }

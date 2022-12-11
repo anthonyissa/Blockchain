@@ -58,7 +58,7 @@ export class Block{
     addMintTransaction(miner:string, reward:number):boolean{
         if(this.status != BlockStatusEnum.PENDING) return false;
         this.miner = miner;
-        this.transactions.push(new Transaction("COINBASE",  [new TransactionData(miner, TransactionTypeEnum.OUT, reward)]));
+        this.transactions.push(new Transaction("COINBASE",  [new TransactionData("COINBASE", TransactionTypeEnum.IN, reward), new TransactionData(miner, TransactionTypeEnum.OUT, reward),  new TransactionData("COINBASE", TransactionTypeEnum.OUT, 0)]));
         return true;
     }
 
@@ -69,6 +69,23 @@ export class Block{
      */
     hasUserSpentInThisBlock(user:string):boolean{
         return this.transactions.find((transaction) => transaction.address == user) ? true : false;
+    }
+    
+    /** TODO: temp function
+     * Add a new transaction to the block
+     * @param from User from which the amount is sent
+     * @param to User to which the amount is sent
+     * @param amount Amount to send
+     * @param blockchain The current blockchain you're working on
+     */
+    addTransaction(from:string, to:string, amount:number, blockchain:Blockchain){
+        this.status = BlockStatusEnum.NEW;
+        this.transactions.push(new Transaction(from,
+            [
+                new TransactionData(from, TransactionTypeEnum.IN, blockchain.getBalance(from)),
+                new TransactionData(from, TransactionTypeEnum.OUT, blockchain.getBalance(from)-amount),
+                new TransactionData(to, TransactionTypeEnum.OUT, amount)
+            ]));
     }
 
 }

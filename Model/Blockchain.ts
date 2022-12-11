@@ -1,5 +1,6 @@
 import { Block } from "./Block";
 import sha256 from 'crypto-js/sha256';
+import { Transaction } from "./Transaction";
 
 export class Blockchain{
 
@@ -33,5 +34,20 @@ export class Blockchain{
 
     getLastBlock():Block{
         return this.chain[this.chain.length - 1];
+    }
+
+    getBalance(address: string):number{
+        let currentBlock:Block;
+        let currentTransaction:Transaction;
+        for(let i = this.chain.length-1; i>=0; i--){
+            currentBlock = this.chain[i];
+            for(let j = currentBlock.transactions.length-1; j>=0; j--){
+                currentTransaction = currentBlock.transactions[j];
+                if(currentTransaction.address == address){
+                    return currentTransaction.getConcernedOutTransactionDataAmount();
+                }
+            }
+        }
+        return 0;
     }
 }

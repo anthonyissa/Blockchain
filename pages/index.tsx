@@ -15,7 +15,7 @@ export default function Home(props:{blockchain:Blockchain}) {
   const [balanceVisible, setBalanceVisible] = useState<boolean>(false);
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
-  const [amount, setAmount] = useState<number | undefined>(0);
+  const [amount, setAmount] = useState<number>(0.0);
   const [block, setBlock] = useState<Block | null>(new Block(new Date().getTime(), []))
 
 
@@ -30,7 +30,7 @@ export default function Home(props:{blockchain:Blockchain}) {
     setTo(user);
   }
   function handleChangeAmount(amount:string){
-    setAmount(parseInt(amount));
+    setAmount(parseFloat(amount));
   }
 
   function getBalance(){
@@ -44,7 +44,6 @@ export default function Home(props:{blockchain:Blockchain}) {
       block?.addTransaction(from, to, amount, blockchain);
       setBlock(new Block(block.timestamp, [...block.transactions]))
       setFrom("");
-      setAmount(0);
       setTo("");
     }
   }
@@ -67,7 +66,7 @@ export default function Home(props:{blockchain:Blockchain}) {
           <div className='flex items-center mt-5'>
             <input className='input' value={from} type="text" placeholder='From' onChange={(e) => handleChangeFrom(e.target.value)}/>
             <input className='input' value={to} type="text" placeholder='To' onChange={(e) => handleChangeTo(e.target.value)}/>
-            <input className='input' value={amount} type="text" placeholder='Amount' onChange={(e) => handleChangeAmount(e.target.value)}/>
+            <input className='input' placeholder='Amount' onChange={(e) => handleChangeAmount(e.target.value)}/>
             <button className='button' onClick={addTransaction}>Add Transaction</button>
           </div>
           {(block && blockchain && block.transactions.length != 0 &&

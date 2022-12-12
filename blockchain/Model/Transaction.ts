@@ -58,6 +58,7 @@ export class Transaction{
             if(address == "COINBASE") return false; // COINBASE only takes part of transactions added when a block is mined, therefore can't exist when trying to validate
             else if(type == TransactionTypeEnum.IN) totalIn += amount;
             else totalOut += amount;
+            if(type == TransactionTypeEnum.OUT && this.address == address && amount < 0) return false;
         }
         return totalIn == totalOut && totalIn == blockchain.getBalance(this.address);
     }

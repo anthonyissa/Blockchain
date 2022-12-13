@@ -11,7 +11,7 @@ const BlockchainView = (props:{blockchain:Blockchain}) => {
     }
 
     return (
-        <div className="bg-indigo-100 p-3 rounded-lg mt-5">
+        <div className="bg-indigo-100 p-3 rounded-lg mt-5 drop-shadow-md">
             <h1 className="font-bold text-xl">Blockchain : </h1>
             {
                 props.blockchain.chain.map((block, index) => {

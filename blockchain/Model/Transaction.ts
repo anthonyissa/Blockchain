@@ -2,6 +2,7 @@ import { TransactionData } from "./TransactionData";
 import sha256 from 'crypto-js/sha256';
 import { TransactionTypeEnum } from "./Enum/enums";
 import { Blockchain } from "./Blockchain";
+import { Block } from "./Block";
 
 export class Transaction{
 
@@ -20,7 +21,7 @@ export class Transaction{
      * @returns Transaction's hash
      */
     calculateHash():string{
-        return sha256(this.address + this.hash + this.transactionData).toString();
+        return sha256(this.address + this.hash + JSON.stringify(this.transactionData)).toString();
     }
 
     // getConcernedOutTransactionDataAmount():number{
@@ -51,15 +52,15 @@ export class Transaction{
      * @param blockchain The current blockchain you're working on
      * @returns True if transaction data is valid
      */
-    areInAndOutValid(blockchain:Blockchain):boolean{
+    areInAndOutValid():boolean{
         let totalIn:number = 0;
         let totalOut:number = 0;
         for(const { type, amount, address } of this.transactionData){
             if(address == "COINBASE") return false; // COINBASE only takes part of transactions added when a block is mined, therefore can't exist when trying to validate
             else if(type == TransactionTypeEnum.IN) totalIn += amount;
             else totalOut += amount;
-            if(type == TransactionTypeEnum.OUT && this.address == address && amount < 0) return false;
+            if(this.address == address && amount < 0) return false;
         }
-        return totalIn == totalOut && totalIn == blockchain.getBalance(this.address);
+        return totalIn == totalOut; // TODO: La verification se fait quand on ajoute la transaction aulieu d'ici !!!
     }
 }

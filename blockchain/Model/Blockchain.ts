@@ -3,7 +3,6 @@ import sha256 from 'crypto-js/sha256';
 import { Transaction } from "./Transaction";
 import { BlockStatusEnum, TransactionTypeEnum } from "./Enum/enums";
 import { TransactionData } from "./TransactionData";
-import { resolve } from "path";
 
 export class Blockchain{
 
@@ -94,6 +93,6 @@ export class Blockchain{
      * @returns True if block is valid
      */
     checkBlock(block:Block):boolean{
-        return block.validateBlock(this);
+        return block.validateBlock();
     }
 }
